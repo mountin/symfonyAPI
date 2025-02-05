@@ -19,14 +19,18 @@ class LedgersController extends AbstractController
         // Get the data from the request
         $data = json_decode($request->getContent(), true);
 
+        
+      
+
         if (isset($data['amount'], $data['Currency'])) {
+            $currency = $entityManager->getRepository('CurrencyRepository')->findBy(['id'=>$data['Currency']]);
+            
             // Create new Ledgers
             $Ledger = new Ledgers();
-            $Ledger->setUuid($data['name']);
             $Ledger->setAmount($data['amount']);
             $Ledger->setFirstName($data['FirstName']);
             $Ledger->setLastName($data['LastName']);
-            $Ledger->setCurrency($data['Currency']);
+            $Ledger->setCurrency($currency);
 
             // Persist the Ledger entity to the database
             $entityManager->persist($Ledger);
