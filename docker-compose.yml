@@ -4,7 +4,12 @@ services:
   app:
     image: php:8.2-fpm
     container_name: symfony_app
+    environment:
+      SYMFONY_DOTENV_FILE: .env.docker
     working_dir: /var/www/symfonyAPI
+    build:
+      context: ./  # Path to the directory with your Dockerfile (current directory)
+      dockerfile: Dockerfile  # Optional if your file is named 'Dockerfile'
     volumes:
       - /var/www/symfonyAPI:/var/www/symfonyAPI
     networks:

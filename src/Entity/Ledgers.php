@@ -8,8 +8,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
 
 #[ORM\Entity(repositoryClass: LedgersRepository::class)]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Post()
+    ]
+)]
 class Ledgers
 {
     #[ORM\Id]
@@ -20,7 +29,7 @@ class Ledgers
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $amount = null;
 
-    #[ORM\ManyToOne(inversedBy: 'ledgers')]
+    #[ORM\ManyToOne(inversedBy: 'ledgers', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Currency $currency = null;
 
@@ -48,8 +57,8 @@ class Ledgers
     public function __construct()
     {
         $this->Uuid = Uuid::v4(); // Generate a UUID (v4) when the entity is created
-        $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
         $this->transactions = new ArrayCollection();
     }
 
