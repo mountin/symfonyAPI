@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Controller\LedgersController;
 use App\Repository\LedgersRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -11,12 +12,16 @@ use Symfony\Component\Uid\Uuid;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LedgersRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(),
-        new Post()
+        new Post(
+            uriTemplate: '/ledgers',
+            controller: LedgersController::class, // Custom Controller
+            deserialize: false, // We will handle request manually
+        )
     ]
 )]
 class Ledgers
@@ -27,6 +32,12 @@ class Ledgers
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotNull(message: "Amount is required.")]
+    #[Assert\Type(
+        type: 'numeric',
+        message: "Amount should be a numeric."
+    )]
+    #[Assert\Positive(message: "Amount should be positive")]
     private ?string $amount = null;
 
     #[ORM\ManyToOne(inversedBy: 'ledgers', cascade: ['persist', 'remove'])]
@@ -37,9 +48,11 @@ class Ledgers
     private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(message: "Name required.")]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(message: "Last Name required.")]
     private ?string $lastName = null;
 
     #[ORM\Column]
@@ -56,7 +69,7 @@ class Ledgers
 
     public function __construct()
     {
-        $this->Uuid = Uuid::v4(); // Generate a UUID (v4) when the entity is created
+        $this->uuid = Uuid::v4(); // Generate a UUID (v4) when the entity is created
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
         $this->transactions = new ArrayCollection();
@@ -174,4 +187,5 @@ class Ledgers
 
         return $this;
     }
+
 }

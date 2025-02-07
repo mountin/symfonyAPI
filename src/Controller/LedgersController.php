@@ -3,45 +3,67 @@
 namespace App\Controller;
 
 use App\Entity\Ledgers;
+use App\Repository\CurrencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Attribute\AsController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+
 
 class LedgersController extends AbstractController
 {
-    /**
-     * @Route("/api/Ledgers", name="create_Ledgers", methods={"POST"})
-     */
-    public function create(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    private EntityManagerInterface $entityManager;
+    private ValidatorInterface $validator;
+    private CurrencyRepository $currencyRepository;
+
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, CurrencyRepository $currencyRepository,)
     {
-        // Get the data from the request
+        $this->entityManager = $entityManager;
+        $this->validator = $validator;
+        $this->currencyRepository = $currencyRepository;
+    }
+
+    public function __invoke(Request $request, CurrencyRepository $currencyRepository): JsonResponse
+    {
         $data = json_decode($request->getContent(), true);
 
-        
-      
+        if (!$data) {
+            return new JsonResponse(['error' => 'Incorrect JSON'], 400);
+        }
 
-        if (isset($data['amount'], $data['Currency'])) {
-            $currency = $entityManager->getRepository('CurrencyRepository')->findBy(['id'=>$data['Currency']]);
-            
+        if (isset($data['amount'], $data['currency'])) {
+            $currency = $currencyRepository->findBy(['id'=>$data['currency']]);
+
             // Create new Ledgers
             $Ledger = new Ledgers();
-            $Ledger->setAmount($data['amount']);
-            $Ledger->setFirstName($data['FirstName']);
-            $Ledger->setLastName($data['LastName']);
-            $Ledger->setCurrency($currency);
+            $Ledger->setAmount($data['amount'] ?? 0);
+            $Ledger->setFirstName($data['firstName'] ?? '');
+            $Ledger->setLastName($data['lastName'] ?? '');
+            $Ledger->setCurrency($currency[0]);
+
+            // validate
+            $errors = $this->validator->validate($Ledger);
+            if (count($errors) > 0) {
+                $errorMessages = [];
+                foreach ($errors as $error) {
+                    $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
+                }
+                return new JsonResponse(['errors' => $errorMessages], 400);
+            }
 
             // Persist the Ledger entity to the database
-            $entityManager->persist($Ledger);
-            $entityManager->flush();
+            $this->entityManager->persist($Ledger);
+            $this->entityManager->flush();
 
             // Return a response with the created Ledger data
             return $this->json([
-                'id' => $Ledger->getId(),
-                'name' => $Ledger->getFirstName(),
-                'price' => $Ledger->getAmount(),
                 'uid' => $Ledger->getUuid(),
+                'name' => $Ledger->getFirstName() . ' '. $Ledger->getLastName(),
+                'price' => $Ledger->getAmount(),
                 'created' => $Ledger->getCreatedAt(),
             ], 201); // 201 Created
         }
