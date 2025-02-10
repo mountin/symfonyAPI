@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use PhpParser\Node\Scalar\String_;
 use Symfony\Component\Uid\Uuid;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
@@ -20,15 +19,22 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 
 
 #[ORM\Entity(repositoryClass: LedgersRepository::class)]
+#[ORM\Table(name: 'ledgers', uniqueConstraints: [
+    new ORM\UniqueConstraint(name: 'unique_ledger_currency', columns: ['currency_id', 'uuid'])
+])]
 #[ApiResource(
     operations: [
-        new Get(uriTemplate: '/ledgers/{id}'), // Get single ledger
+        new Get(
+            uriTemplate: '/balances/{ledgerId}',
+            controller: LedgersController::class,
+            name:'get_balances'),
         new GetCollection(uriTemplate: '/ledgers'), // Get all ledgers
         new Post(
             uriTemplate: '/ledgers',
             controller: LedgersController::class, // Custom Controller
-            deserialize: false, // We will handle request manually
+            deserialize: false,
         )
+
     ]
 )]
 #[ApiFilter(OrderFilter::class, properties: ['amount' => 'ASC', 'firstName' => 'DESC'])]
@@ -53,7 +59,11 @@ class Ledgers
     #[ORM\JoinColumn(nullable: false)]
     private ?Currency $currency = null;
 
-    #[ORM\Column(type: 'uuid', unique: true)]
+    #[ORM\Column(type: 'uuid', options: ['index' => true]) ]
+    #[Assert\NotNull(message: "uuID required.")]
+    #[Assert\Uuid(
+        message: 'The value must be a valid UUID'
+    )]
     private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255, nullable: true)]

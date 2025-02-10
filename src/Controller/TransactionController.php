@@ -11,7 +11,6 @@ use App\Repository\CurrencyRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -49,7 +48,14 @@ class TransactionController extends AbstractController
             return new JsonResponse(['error' => 'Missing required fields'], 401);
         }
 
-        $ledgerID = $this->entityManager->getRepository(Ledgers::class)->findBy(['uuid'=>$data['ledgerID']])[0];
+        $currency = $currencyRepository->findBy(['id'=>$data['currency']])[0];
+
+
+        $ledgerID = $this->entityManager->getRepository(Ledgers::class)->findBy(
+            ['uuid'=>$data['ledgerID'],
+            'currency' => $currency]
+        )[0];
+
         if (!$ledgerID) {
             return new JsonResponse(['error' => 'Ledger not found'], 404);
         }
@@ -61,7 +67,7 @@ class TransactionController extends AbstractController
             return new JsonResponse(['error' => 'Insufficient balance'], 400);
         }
 
-            $currency = $currencyRepository->findBy(['id'=>$data['currency']])[0];
+
 
             // Create new Transaction
             $transaction = new Transaction();

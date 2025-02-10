@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
@@ -25,6 +24,27 @@ class LedgersController extends AbstractController
         $this->entityManager = $entityManager;
         $this->validator = $validator;
         $this->currencyRepository = $currencyRepository;
+    }
+
+
+    #[Route('/api/balances/{id}', name: 'get_balances', methods: ['GET'])]
+    public function getBalance(string $id, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $ladgers = $entityManager->getRepository(Ledgers::class)->findBy(criteria: ['uuid' => $id]);
+
+        if (!$ladgers) {
+            return $this->json(['error' => 'Balance not found'], 404);
+        }
+        // Return only ledgerIds with data
+        $data = array_map(function ($ladgers) {
+            return [
+                'ledgerId' => $ladgers->getUuid(),
+                'balance' => $ladgers->getAmount(),
+                'currency' => $ladgers->getCurrency(),
+            ];
+        }, $ladgers);
+
+        return $this->json($data);
     }
 
     public function __invoke(Request $request, CurrencyRepository $currencyRepository): JsonResponse
@@ -55,7 +75,6 @@ class LedgersController extends AbstractController
                 return new JsonResponse(['errors' => $errorMessages], 400);
             }
 
-            // Persist the Ledger entity to the database
             $this->entityManager->persist($Ledger);
             $this->entityManager->flush();
 
