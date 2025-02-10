@@ -3,13 +3,26 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use App\Controller\LedgersController;
+use App\Controller\TransactionController;
 use App\Repository\TransactionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
-#[ApiResource]
+
+#[ApiResource(
+    operations: [
+        new Post(
+            uriTemplate: '/transactions', // Custom URL
+            controller: TransactionController::class, // Custom Controller
+            name: 'get_featured_products'
+        )
+    ]
+)]
 class Transaction
 {
     #[ORM\Id]
@@ -31,12 +44,16 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?Currency $currency = null;
 
-    #[ORM\Column(type: 'uuid')]
-    private ?Uuid $transactionId = null;
+    #[ORM\Column]
+    private ?string $transactionId = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -80,6 +97,7 @@ class Transaction
 
     public function getCurrency(): ?Currency
     {
+
         return $this->currency;
     }
 
@@ -90,12 +108,12 @@ class Transaction
         return $this;
     }
 
-    public function getTransactionId(): ?Uuid
+    public function getTransactionId(): ?String
     {
         return $this->transactionId;
     }
 
-    public function setTransactionId(Uuid $transactionId): static
+    public function setTransactionId(String $transactionId): static
     {
         $this->transactionId = $transactionId;
 
@@ -113,4 +131,5 @@ class Transaction
 
         return $this;
     }
+
 }

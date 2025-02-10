@@ -20,7 +20,7 @@ class LedgersController extends AbstractController
     private ValidatorInterface $validator;
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, CurrencyRepository $currencyRepository,)
+    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator, CurrencyRepository $currencyRepository)
     {
         $this->entityManager = $entityManager;
         $this->validator = $validator;
@@ -72,4 +72,6 @@ class LedgersController extends AbstractController
             'error' => 'Invalid data.',
         ], 400); // 400 Bad Request
     }
+
+
 }

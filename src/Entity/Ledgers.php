@@ -8,15 +8,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use PhpParser\Node\Scalar\String_;
 use Symfony\Component\Uid\Uuid;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+
 
 #[ORM\Entity(repositoryClass: LedgersRepository::class)]
 #[ApiResource(
     operations: [
+        new Get(uriTemplate: '/ledgers/{id}'), // Get single ledger
+        new GetCollection(uriTemplate: '/ledgers'), // Get all ledgers
         new Post(
             uriTemplate: '/ledgers',
             controller: LedgersController::class, // Custom Controller
@@ -24,6 +31,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         )
     ]
 )]
+#[ApiFilter(OrderFilter::class, properties: ['amount' => 'ASC', 'firstName' => 'DESC'])]
+#[ApiFilter(SearchFilter::class, properties: ['uuid' => 'partial', 'currency' => 'exact'])]
 class Ledgers
 {
     #[ORM\Id]
@@ -44,7 +53,7 @@ class Ledgers
     #[ORM\JoinColumn(nullable: false)]
     private ?Currency $currency = null;
 
-    #[ORM\Column(type: 'uuid')]
+    #[ORM\Column(type: 'uuid', unique: true)]
     private ?Uuid $uuid = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -93,9 +102,9 @@ class Ledgers
         return $this;
     }
 
-    public function getCurrency(): ?Currency
+    public function getCurrency(): ?String
     {
-        return $this->currency;
+        return $this->currency->getCode();
     }
 
     public function setCurrency(?Currency $currency): static
@@ -186,6 +195,15 @@ class Ledgers
         }
 
         return $this;
+    }
+
+    public function updateBalance(string $type, float $amount): void
+    {
+        if ($type === 'debit') {
+            $this->amount -= $amount;
+        } else {
+            $this->amount += $amount;
+        }
     }
 
 }
