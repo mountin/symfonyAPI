@@ -42,6 +42,11 @@ class Currency
     {
         return $this->id;
     }
+    public function setId($id): ?int
+    {
+         return $this->id = $id;
+
+    }
 
     public function getCode(): ?string
     {

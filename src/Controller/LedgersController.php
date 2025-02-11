@@ -1,5 +1,4 @@
 <?php
-// src/Controller/LedgersController.php
 namespace App\Controller;
 
 use App\Entity\Ledgers;

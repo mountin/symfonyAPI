@@ -32,10 +32,10 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
         new Post(
             uriTemplate: '/ledgers',
             controller: LedgersController::class, // Custom Controller
-            deserialize: false,
+            deserialize: false
         )
-
     ]
+
 )]
 #[ApiFilter(OrderFilter::class, properties: ['amount' => 'ASC', 'firstName' => 'DESC'])]
 #[ApiFilter(SearchFilter::class, properties: ['uuid' => 'partial', 'currency' => 'exact'])]
