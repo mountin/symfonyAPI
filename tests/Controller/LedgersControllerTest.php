@@ -4,14 +4,23 @@
 namespace App\Tests\Controller;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
+use App\Repository\CurrencyRepository;
 use Symfony\Component\Uid\Uuid;
 use App\Entity\Ledgers;
 use App\Entity\Currency;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class LedgersControllerTest extends ApiTestCase
 {
+
     private EntityManagerInterface $entityManager;
+    public static String $baseUrl = 'http://localhost:8080';
+
     protected function setUp(): void
     {
         self::bootKernel();
@@ -20,9 +29,8 @@ class LedgersControllerTest extends ApiTestCase
 
     public function testGetCollection1(): void
     {
-
         $client = static::createClient([], [
-            'base_uri' => 'http://localhost:8080'
+            'base_uri' => self::$baseUrl
         ]);
         // Запрос к API
         $response = $client->request('GET', '/api/ledgers');
@@ -31,35 +39,31 @@ class LedgersControllerTest extends ApiTestCase
         // Проверяем статус ответа
         $this->assertResponseStatusCodeSame(200);
 
-
     }
 
     public function testGetCollection2(): void
     {
 
         $client = static::createClient([], [
-            'base_uri' => 'http://localhost:8080'
+            'base_uri' => self::$baseUrl
         ]);
         $response = $client->request('GET', '/api/balances/8b05c363-79a2-4a12-bc5f-e2104852cb54');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
 
-//        $this->assertJsonContains([
-//            'ledgerId' => '8b05c363-79a2-4a12-bc5f-e2104852cb54',
-//            'balance' => '111.00',
-//            'currency' => 'EUR'
-//        ]);
+
+        //->assertJsonContains([
+        //    'ledgerId' => '8b05c363-79a2-4a12-bc5f-e2104852cb54',
+        //    'balance' => '111.00'
+        //]);
+
     }
-
-
-
-
 
     public function testGetBalanceNotFound(): void
     {
         $client = static::createClient([], [
-            'base_uri' => 'http://localhost:8080'
+            'base_uri' => self::$baseUrl
         ]);
 
         $client->request('GET', '/api/balances/' . Uuid::v4());
@@ -68,33 +72,45 @@ class LedgersControllerTest extends ApiTestCase
         $this->assertJsonContains(['error' => 'Balance not found']);
     }
 
-    public function testCreateLedger(): void
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
+    public function testCreateLedger( ): void
     {
-        //$client = $this->getClient();
+
         $client = static::createClient([], [
-            'base_uri' => 'http://localhost:8080'
+            'base_uri' => self::$baseUrl
         ]);
         // Create Currency
         $currency = new Currency();
         $currency->setCode('USD');
-        $currency->setId(2);
+        $currency->setSymbol('USD');
+        $currency->setName('USD');
+        $currency->setIsActive(true);
+
+
         $this->entityManager->persist($currency);
         $this->entityManager->flush();
 
         // Send request to create ledger
-        $client->request('POST', '/api/balances', [
+        $client->request('POST', '/api/ledgers', [
             'json' => [
                 'amount' => '500.00',
                 'currency' => $currency->getId(),
                 'firstName' => 'John',
                 'lastName' => 'Doe'
-            ],
+            ]
         ]);
 
         $this->assertResponseStatusCodeSame(201);
         $this->assertJsonContains([
+            'currency' => $currency->getCode(),
             'name' => 'John Doe',
-            'price' => '500.00'
+            'amount' => '500.00'
         ]);
     }
 }

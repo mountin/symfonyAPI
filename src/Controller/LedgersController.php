@@ -81,7 +81,8 @@ class LedgersController extends AbstractController
             return $this->json([
                 'uid' => $Ledger->getUuid(),
                 'name' => $Ledger->getFirstName() . ' '. $Ledger->getLastName(),
-                'price' => $Ledger->getAmount(),
+                'amount' => $Ledger->getAmount(),
+                'currency' => $Ledger->getCurrency(),
                 'created' => $Ledger->getCreatedAt(),
             ], 201); // 201 Created
         }
