@@ -16,7 +16,6 @@ use Doctrine\ORM\Mapping as ORM;
         new Post(
             uriTemplate: '/transactions', // Custom URL
             controller: TransactionController::class, // Custom Controller
-            name: 'get_featured_products'
         )
     ]
 )]
