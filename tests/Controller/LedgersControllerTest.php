@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Tests\Controller;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
