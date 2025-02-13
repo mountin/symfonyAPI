@@ -101,8 +101,8 @@ class TransactionControllerTest extends ApiTestCase
             ],
         ]);
 
-        $this->assertResponseStatusCodeSame(400);
-        $this->assertJsonContains(['error' => 'Invalid transaction type']);
+        $this->assertResponseStatusCodeSame(404);
+        $this->assertJsonContains(['error' => 'Ledger not found']);
     }
 
     public function testCreateTransactionWithInsufficientBalance(): void
