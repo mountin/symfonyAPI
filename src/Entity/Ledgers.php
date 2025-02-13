@@ -209,10 +209,20 @@ class Ledgers
 
     public function updateBalance(string $type, float $amount): void
     {
+        if ($amount <= 0) {
+            throw new \InvalidArgumentException('Amount must be a positive value.');
+        }
+
+        $validTypes = ['debit', 'credit'];
+
+        if (!in_array($type, $validTypes, true)) {
+            throw new \InvalidArgumentException('Invalid transaction type. Allowed types: debit, credit.');
+        }
+
         if ($type === 'debit') {
-            $this->amount -= $amount;
+            $this->amount = \bcsub($this->amount, (string) $amount, 2); // Ensures decimal precision
         } elseif ($type === 'credit') {
-            $this->amount += $amount;
+            $this->amount = \bcadd($this->amount, (string) $amount, 2);
         }
     }
 
