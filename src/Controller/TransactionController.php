@@ -92,8 +92,8 @@ class TransactionController extends AbstractController
 
 
             return new JsonResponse([
-                'transactionId' => $transaction->getTransactionId(),
-                'ledgerId' => $transaction->getLedger()->getUuid(),
+                'transactionID' => $transaction->getTransactionId(),
+                'ledgerID' => $transaction->getLedger()->getUuid(),
                 'type' => $transaction->getType(),
                 'currency' => $transaction->getCurrency()->getCode(),
                 'newAmount' => $ledgerID->getAmount(),
