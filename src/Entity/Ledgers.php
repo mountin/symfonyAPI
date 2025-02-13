@@ -211,7 +211,7 @@ class Ledgers
     {
         if ($type === 'debit') {
             $this->amount -= $amount;
-        } else {
+        } elseif ($type === 'credit') {
             $this->amount += $amount;
         }
     }

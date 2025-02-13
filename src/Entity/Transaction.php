@@ -8,7 +8,7 @@ use App\Controller\TransactionController;
 use App\Repository\TransactionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: TransactionRepository::class)]
 
 #[ApiResource(
@@ -34,10 +34,17 @@ class Transaction
     private ?string $type = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotNull(message: "Amount is required.")]
+    #[Assert\Type(
+        type: 'numeric',
+        message: "Amount should be a numeric."
+    )]
+    #[Assert\Positive(message: "Amount should be positive")]
     private ?string $amount = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: "Currency required.")]
     private ?Currency $currency = null;
 
     #[ORM\Column]

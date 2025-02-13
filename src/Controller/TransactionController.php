@@ -34,7 +34,7 @@ class TransactionController extends AbstractController
             'controller_name' => 'TransactionsController',
         ]);
     }
-    //details like ledger ID,
+
     // transaction type (debit/credit), amount, currency, and a unique transaction ID
     public function __invoke(Request $request, CurrencyRepository $currencyRepository): JsonResponse
     {
@@ -48,14 +48,15 @@ class TransactionController extends AbstractController
             return new JsonResponse(['error' => 'Missing required fields'], 401);
         }
 
-        $currency = $currencyRepository->findBy(['id'=>$data['currency']])[0];
+        $currency = $currencyRepository->findOneBy(['id'=>$data['currency']]);
+        if (!$currency) {
+              return new JsonResponse(['error' => 'Currency not found'], 404);
+         }
 
-
-        $ledgerID = $this->entityManager->getRepository(Ledgers::class)->findBy(
+        $ledgerID = $this->entityManager->getRepository(Ledgers::class)->findOneBy(
             ['uuid'=>$data['ledgerID'],
             'currency' => $currency]
-        )[0];
-
+        );
         if (!$ledgerID) {
             return new JsonResponse(['error' => 'Ledger not found'], 404);
         }
@@ -66,8 +67,6 @@ class TransactionController extends AbstractController
         if ($data['type'] === 'debit' && $ledgerID->getAmount() < $data['amount']) {
             return new JsonResponse(['error' => 'Insufficient balance'], 400);
         }
-
-
 
             // Create new Transaction
             $transaction = new Transaction();
