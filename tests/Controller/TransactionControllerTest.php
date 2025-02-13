@@ -69,9 +69,11 @@ class TransactionControllerTest extends ApiTestCase
 
     public function testCreateTransactionWithMissingFields(): void
     {
-        $client = static::createClient();
+        $client = static::createClient([], [
+            'base_uri' => self::$baseUrl
+        ]);
 
-        $client->request('POST', '/transactions', [
+        $client->request('POST', '/api/transactions', [
             'json' => [
                 'type' => 'debit',
                 'amount' => '500.00',
@@ -85,9 +87,11 @@ class TransactionControllerTest extends ApiTestCase
 
     public function testCreateTransactionWithInvalidType(): void
     {
-        $client = static::createClient();
+        $client = static::createClient([], [
+            'base_uri' => self::$baseUrl
+        ]);
 
-        $client->request('POST', '/transactions', [
+        $client->request('POST', '/api/transactions', [
             'json' => [
                 'ledgerID' => Uuid::v4(),
                 'type' => 'invalid_type',
@@ -108,7 +112,9 @@ class TransactionControllerTest extends ApiTestCase
         // Create Currency
         $currency = new Currency();
         $currency->setCode('EUR');
-        $currency->setId(1);
+        $currency->setSymbol('EUR');
+        $currency->setName('EUR');
+        $currency->setIsActive(true);
         $this->entityManager->persist($currency);
 
         // Create Ledger with low balance
@@ -137,9 +143,11 @@ class TransactionControllerTest extends ApiTestCase
 
     public function testCreateTransactionWithNonExistingLedger(): void
     {
-        $client = static::createClient();
+        $client = static::createClient([], [
+            'base_uri' => self::$baseUrl
+        ]);
 
-        $client->request('POST', '/transactions', [
+        $client->request('POST', '/api/transactions', [
             'json' => [
                 'ledgerID' => Uuid::v4(), // Non-existing Ledger ID
                 'type' => 'credit',
