@@ -9,3 +9,5 @@ when@test:
     framework:
         validation:
             not_compromised_password: false
+        mapping:
+            paths: [ '%kernel.project_dir%/config/validation' ]

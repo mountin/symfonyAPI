@@ -26,11 +26,12 @@ class LedgersTest extends TestCase
 
     public function testLedgerValidations(): void
     {
-        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
+
         $ledger = new Ledgers();
 
         // Set invalid amount
-        $ledger->setAmount('-10.50');
+        $ledger->setAmount('-100');
 
         // Set valid currency
         $currency = new Currency();
@@ -39,7 +40,7 @@ class LedgersTest extends TestCase
         // Validate
         $errors = $validator->validate($ledger);
 
-        $this->assertGreaterThan(0, count($errors), 'Validation should fail for negative amount');
+         $this->assertGreaterThan(0, count($errors), 'Validation should fail for negative amount');
     }
 
     public function testLedgerBalanceUpdate(): void

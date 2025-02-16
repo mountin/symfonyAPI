@@ -35,11 +35,11 @@ class Transaction
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     #[Assert\NotNull(message: "Amount is required.")]
+    #[Assert\Positive(message: "Amount should be positive")]
     #[Assert\Type(
         type: 'numeric',
         message: "Amount should be a numeric."
     )]
-    #[Assert\Positive(message: "Amount should be positive")]
     private ?string $amount = null;
 
     #[ORM\ManyToOne]

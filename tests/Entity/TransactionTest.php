@@ -46,7 +46,7 @@ class TransactionTest extends TestCase
 
     public function testTransactionValidation(): void
     {
-        $validator = Validation::createValidatorBuilder()->enableAnnotationMapping()->getValidator();
+        $validator = Validation::createValidatorBuilder()->enableAttributeMapping()->getValidator();
         $transaction = new Transaction();
 
         // Invalid type (should be 'debit' or 'credit')
@@ -54,6 +54,20 @@ class TransactionTest extends TestCase
         $transaction->setAmount('-10.50'); // Negative amount
 
         $errors = $validator->validate($transaction);
+
         $this->assertGreaterThan(0, count($errors), 'Validation should fail for invalid type or negative amount');
     }
+
+    public function testTransactionValidation2()
+    {
+        $validator = Validation::createValidator(); // No need for builder in simple cases
+
+        $constraint = new Assert\NotNull();
+        $violations = $validator->validate(null, $constraint);
+
+        $this->assertCount(1, $violations);
+        $this->assertEquals("This value should not be null.", $violations[0]->getMessage());
+    }
+
 }
+
