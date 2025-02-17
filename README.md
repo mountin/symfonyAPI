@@ -1,7 +1,30 @@
 # symfonyAPI
 
+#docker install <br/>
+sudo apt update -y<br/>
+sudo apt install -y docker.io<br/>
+sudo systemctl enable docker <br/>
+sudo systemctl start docker <br/>
+sudo usermod -aG docker $USER <br/>
+
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose <br/>
+<br/>sudo chmod +x /usr/local/bin/docker-compose <br/>
+
+sudo docker-compose up --build
+
 <hr>
-example:<br>
+
+php bin/console doctrine:migrations:generate <br/>
+php bin/console doctrine:database:create --env=test < br/>
+<br/>
+php bin/console doctrine:migrations:migrate --env=test <br/>
+<br/>
+php bin/console doctrine:schema:update --force --env=test <br/>
+php bin/console doctrine:migrations:status --env=test <br/>
+
+
+<hr>
+example API:<br>
 POST /transaction<br/> 
 
 <br/>

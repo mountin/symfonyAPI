@@ -27,3 +27,8 @@
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+.env.dev
+.env.docker
+.env.local
+.env.test
