@@ -31,11 +31,11 @@ POST /api/transaction<br/>
 
 <br/>
 {
-"ledgerID": "1dbbfb73-7d64-47b0-809b-727360446371",
-"type": "debit",
-"amount": "200",
-"currency": "2",
-"transactionID": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  "ledgerID": "84188d62-da2a-4335-bc40-7194242510d7",
+  "type": "credit",
+  "amount": "100",
+  "currency": "3",
+  "transactionID": "3fa85f64-5717-4562-b3fc-test"
 }
 <hr>
 # GET /ledgers
@@ -45,7 +45,7 @@ POST /api/transaction<br/>
 POST:
 /ledgers
 {
-"amount": "2",
+"amount": "1.00",
 "currency": "2",
 "value": "content",
 "firstName":"Ivan",
@@ -55,4 +55,4 @@ POST:
 GET
 /balances <br>
 example:
-/api/balances/8b05c363-79a2-4a12-bc5f-e2104852cb54
+/api/balances/84188d62-da2a-4335-bc40-7194242510d7
