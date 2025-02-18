@@ -10,8 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-
-
 class LedgersController extends AbstractController
 {
     private EntityManagerInterface $entityManager;

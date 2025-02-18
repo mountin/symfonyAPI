@@ -27,14 +27,6 @@ class TransactionController extends AbstractController
         $this->currencyRepository = $currencyRepository;
     }
 
-    #[Route('/transactions', name: 'app_transactions')]
-    public function index(): Response
-    {
-        return $this->render('transactions/index.html.twig', [
-            'controller_name' => 'TransactionsController',
-        ]);
-    }
-
     // transaction type (debit/credit), amount, currency, and a unique transaction ID
     #[Route('/api/transactions', name: 'new_transaction', methods: ['POST'])]
     public function newTransaction(Request $request, CurrencyRepository $currencyRepository): JsonResponse
