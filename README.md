@@ -60,6 +60,6 @@ example:
 <hr>
 for Unit testing run: <br>
 php bin/phpunit <br>
-OR< br/>
+OR with parameters like<br>
 
 /bin/php /var/www/symfonyAPI/vendor/phpunit/phpunit/phpunit --no-configuration --filter App\\Tests\\Entity\\LedgersTest --test-suffix LedgersTest.php /var/www/symfonyAPI/tests/Entity --teamcity --cache-result-file=/var/www/symfonyAPI/.phpunit.result.cache
