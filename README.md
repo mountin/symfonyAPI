@@ -15,15 +15,14 @@ sudo docker-compose up --build
 <hr>
 
 php bin/console doctrine:migrations:generate <br/>
-php bin/console doctrine:database:create --env=test < br/>
+php bin/console doctrine:database:create <br/>
+php bin/console doctrine:database:create --env=test <br/>
 <br/>
+php bin/console doctrine:migrations:migrate <br/>
 php bin/console doctrine:migrations:migrate --env=test <br/>
 <br/>
 php bin/console doctrine:schema:update --force --env=test <br/>
 php bin/console doctrine:migrations:status --env=test <br/>
-
-Example Unittests <br/>
-php bin/phpunit --filter testCreateTransactionSuccess
 
 <hr>
 example API:<br>
@@ -58,8 +57,10 @@ example:
 /api/balances/84188d62-da2a-4335-bc40-7194242510d7
 
 <hr>
-for Unit testing run: <br>
+Example Unittests: <br/>
 php bin/phpunit <br>
+php bin/phpunit --filter testCreateTransactionSuccess
+
 OR with parameters like<br>
 
 /bin/php /var/www/symfonyAPI/vendor/phpunit/phpunit/phpunit --no-configuration --filter App\\Tests\\Entity\\LedgersTest --test-suffix LedgersTest.php /var/www/symfonyAPI/tests/Entity --teamcity --cache-result-file=/var/www/symfonyAPI/.phpunit.result.cache
