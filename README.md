@@ -22,10 +22,12 @@ php bin/console doctrine:migrations:migrate --env=test <br/>
 php bin/console doctrine:schema:update --force --env=test <br/>
 php bin/console doctrine:migrations:status --env=test <br/>
 
+Example Unittests <br/>
+php bin/phpunit --filter testCreateTransactionSuccess
 
 <hr>
 example API:<br>
-POST /transaction<br/> 
+POST /api/transaction<br/> 
 
 <br/>
 {
@@ -38,20 +40,19 @@ POST /transaction<br/>
 <hr>
 # GET /ledgers
 
-api/ledgers/?page=1
+/api/ledgers/?page=1
 <hr>
 POST:
 /ledgers
-
 {
 "amount": "2",
 "currency": "2",
 "value": "content",
-"firstName":"Sergiy",
-"lastName":"Chaialovskiy"
+"firstName":"Ivan",
+"lastName":"Ivanov"
 }
 <hr>
 GET
 /balances <br>
 example:
-balances/8b05c363-79a2-4a12-bc5f-e2104852cb54
+/api/balances/8b05c363-79a2-4a12-bc5f-e2104852cb54

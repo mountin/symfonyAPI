@@ -32,7 +32,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
         new Post(
             uriTemplate: '/ledgers',
             controller: LedgersController::class, // Custom Controller
-            deserialize: false
+            name:'new_ledger'
         )
     ]
 

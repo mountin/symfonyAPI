@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             uriTemplate: '/transactions', // Custom URL
             controller: TransactionController::class, // Custom Controller
+            name: 'new_transaction'
         )
     ]
 )]

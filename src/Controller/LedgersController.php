@@ -45,8 +45,8 @@ class LedgersController extends AbstractController
 
         return $this->json($data);
     }
-
-    public function __invoke(Request $request, CurrencyRepository $currencyRepository): JsonResponse
+    #[Route('/api/ledgers', name: 'new_ledger', methods: ['POST'])]
+    public function newLedger(Request $request, CurrencyRepository $currencyRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 

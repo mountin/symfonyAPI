@@ -36,7 +36,8 @@ class TransactionController extends AbstractController
     }
 
     // transaction type (debit/credit), amount, currency, and a unique transaction ID
-    public function __invoke(Request $request, CurrencyRepository $currencyRepository): JsonResponse
+    #[Route('/api/transactions', name: 'new_transaction', methods: ['POST'])]
+    public function newTransaction(Request $request, CurrencyRepository $currencyRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 

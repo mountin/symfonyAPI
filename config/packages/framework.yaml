@@ -5,6 +5,8 @@ framework:
     # Note that the session will be started ONLY if you read or write from it.
     session: true
 
+    trusted_proxies: ['127.0.0.1', '::1', '13.60.196.55']
+    trusted_hosts: ['^localhost$', '^13\.60\.196\.55$']
     #esi: true
     #fragments: true
 
