@@ -56,3 +56,9 @@ GET
 /balances <br>
 example:
 /api/balances/84188d62-da2a-4335-bc40-7194242510d7
+
+<hr>
+for Unit testing run: <br>
+php bin/phpunit <br>
+OR< br/>
+/bin/php /var/www/symfonyAPI/vendor/phpunit/phpunit/phpunit --no-configuration --filter App\\Tests\\Entity\\LedgersTest --test-suffix LedgersTest.php /var/www/symfonyAPI/tests/Entity --teamcity --cache-result-file=/var/www/symfonyAPI/.phpunit.result.cache
